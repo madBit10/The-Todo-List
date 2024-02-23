@@ -1,51 +1,50 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue';
+import { ref } from 'vue';
 
-let id = 0;
+interface Todo {
+  _id: number;
+  text: string;
+  done: boolean;
+}
+
+let id = ref(0);
 const newTodo = ref('');
-const hideCompleted = ref(false);
-const todos = ref([
- 
-]);
+const todos = ref<Todo[]>([]);
 
 const name = 'Vrushank';
 
-
-
 const addTodos = () => {
   if (!newTodo.value) return;
-  
-  // isEmpty.value = false;
-  todos.value.push({ _id: id++, text: newTodo.value, done: false });
+  todos.value.push({ _id: id.value++, text: newTodo.value, done: false });
   newTodo.value = '';
-}
+};
 
-const removeTodo = (item) => {
-  todos.value = todos.value.filter((t)=>t !== item);
-}
-
-
-
-
+const removeTodo = (item: Todo) => {
+  todos.value = todos.value.filter((t) => t !== item);
+};
 </script>
-
 
 <template>
   <h1 class="header">{{ name }}'s Todo-List</h1>
   <div class="container">
     <div class="addTodo">
       <form @submit.prevent="addTodos">
-        <input type="text"  v-model="newTodo" placeholder="Add a todo..." />
+        <input type="text" v-model="newTodo" placeholder="Add a todo..." />
         <button>Add</button>
       </form>
       <ul>
-        
-        <li v-for="item in todos" :key="item._id"> <span class="todo-text" :class="{ done : item.done }"> {{ item.text + "  " }} </span> <span class="list-btns"> <input class="checkbox-custom" type="checkbox" v-model="item.done"> <button @click="removeTodo(item)">Remove</button></span></li>
+        <li v-for="item in todos" :key="item._id">
+          <span class="todo-text" :class="{ done: item.done }">{{ item.text }}</span>
+          <span class="list-btns">
+            <input class="checkbox-custom" type="checkbox" v-model="item.done">
+            <button @click="removeTodo(item)">Remove</button>
+          </span>
+        </li>
       </ul>
     </div>
   </div>
-  
 </template>
+
 
 
 <style scoped>
