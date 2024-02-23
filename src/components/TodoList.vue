@@ -11,7 +11,7 @@ let id = ref(0);
 const newTodo = ref('');
 const todos = ref<Todo[]>([]);
 
-const name = 'Vrushank';
+
 
 const addTodos = () => {
   if (!newTodo.value) return;
@@ -25,7 +25,7 @@ const removeTodo = (item: Todo) => {
 </script>
 
 <template>
-  <h1 class="header">{{ name }}'s Todo-List</h1>
+  <h1 class="header">The Todo-List</h1>
   <div class="container">
     <div class="addTodo">
       <form @submit.prevent="addTodos">
