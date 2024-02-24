@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
 
 interface Todo {
   _id: number;
@@ -11,16 +11,29 @@ let id = ref(0);
 const newTodo = ref('');
 const todos = ref<Todo[]>([]);
 
+const saveTodosToLocalStorage = () => {
+  localStorage.setItem('todos', JSON.stringify(todos.value));
+}
+
+onMounted(()=> {
+  // Load todos from local storage when component mounts
+  const savedTodos = localStorage.getItem('todos');
+  if(savedTodos) {
+    todos.value = JSON.parse(savedTodos);
+  }
+})
 
 
 const addTodos = () => {
   if (!newTodo.value) return;
   todos.value.push({ _id: id.value++, text: newTodo.value, done: false });
+  saveTodosToLocalStorage(); // save to local storage
   newTodo.value = '';
 };
 
 const removeTodo = (item: Todo) => {
   todos.value = todos.value.filter((t) => t !== item);
+  saveTodosToLocalStorage();
 };
 </script>
 
