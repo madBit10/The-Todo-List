@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
+import { ref, watch, onMounted } from 'vue';
+
 
 interface Todo {
   _id: number;
@@ -11,30 +12,36 @@ let id = ref(0);
 const newTodo = ref('');
 const todos = ref<Todo[]>([]);
 
-const saveTodosToLocalStorage = () => {
-  localStorage.setItem('todos', JSON.stringify(todos.value));
+
+const storageTodo = window.localStorage.getItem( 'todos'); 
+
+if(storageTodo) {
+  todos.value = JSON.parse(storageTodo);
 }
 
-onMounted(()=> {
-  // Load todos from local storage when component mounts
-  const savedTodos = localStorage.getItem('todos');
-  if(savedTodos) {
-    todos.value = JSON.parse(savedTodos);
-  }
-})
+watch(todos, val => {
+  window.localStorage.setItem('todos', JSON.stringify(val));
+}, {deep: true});
 
 
 const addTodos = () => {
   if (!newTodo.value) return;
   todos.value.push({ _id: id.value++, text: newTodo.value, done: false });
-  saveTodosToLocalStorage(); // save to local storage
+  
   newTodo.value = '';
 };
 
 const removeTodo = (item: Todo) => {
-  todos.value = todos.value.filter((t) => t !== item);
-  saveTodosToLocalStorage();
+  todos.value = todos.value.filter((t) => t !== item); 
 };
+
+// const toggleTodo = (item: Todo) => {
+//   const index = todos.value.indexOf(item);
+//   todos.value[index] = { ...item, done: !item.done };
+//   saveTodosToLocalStorage();
+// }
+
+
 </script>
 
 <template>
@@ -49,7 +56,7 @@ const removeTodo = (item: Todo) => {
         <li v-for="item in todos" :key="item._id">
           <span class="todo-text" :class="{ done: item.done }">{{ item.text }}</span>
           <span class="list-btns">
-            <input class="checkbox-custom" type="checkbox" v-model="item.done">
+            <input class="checkbox-custom" type="checkbox" v-model="item.done" >
             <button @click="removeTodo(item)">Remove</button>
           </span>
         </li>
@@ -245,7 +252,7 @@ li > span > button {
   }
 }
 
-.done {
+.todo-text.done {
   text-decoration: line-through;
 }
 
